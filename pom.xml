@@ -73,7 +73,7 @@
              5. DRIVER POSTGRESQL — requerido para YugabyteDB
              (usa el protocolo de wire de PostgreSQL).
              También sirve para desarrollo local si levantas
-             un Postgres en Docker en lugar de MySQL.
+             un Postgres en Dockerfile en lugar de MySQL.
         ================================================= -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
