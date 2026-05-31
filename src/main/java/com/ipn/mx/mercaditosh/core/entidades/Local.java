@@ -2,7 +2,9 @@ package com.ipn.mx.mercaditosh.core.entidades;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +25,7 @@ public class Local {
     private Integer idLocal;
 
     @NotBlank(message = "El numero del local no puede estar vacío")
+    @Min(value = 1, message = "El número de local debe ser mayor a 0")
     @Column(name = "numero_local", nullable = false)
     private Integer numeroLocal;
 
@@ -32,12 +35,15 @@ public class Local {
     private String tipoLocal;
 
     @NotBlank(message = "El estado del local no puede estar vacío")
-    @Size(max = 50, message = "El estado no puede superar los 50 caracteres")
+    @Pattern(
+            regexp = "ocupado|disponible|en_mantenimiento",
+            message = "El estado debe ser: ocupado, disponible o en_mantenimiento"
+    )
     @Column(name = "estado",  nullable = false, length = 50)
     private String estado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_mercado", nullable = false)
     @JsonBackReference
-    private Integer idMercado;
+    private Mercado mercado;
 }
