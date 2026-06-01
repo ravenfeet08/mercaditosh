@@ -123,7 +123,7 @@ public class PagoServiceImpl implements PagoService {
         // En un caso real el locatario tendría un campo "email" —
         // por ahora puedes hardcodear tu correo para la prueba
         emailService.enviarConfirmacionPago(
-                "arellano.acosta.ixchel@gmail.com",          // destinatario (pon tu correo aquí)
+                "gatitaixchelaa@gmail.com",          // destinatario (pon tu correo aquí)
                 locatario.getNombre(),           // nombre del locatario
                 pago.getMonto().toString(),      // monto
                 pago.getFechaPago().toString()   // fecha
