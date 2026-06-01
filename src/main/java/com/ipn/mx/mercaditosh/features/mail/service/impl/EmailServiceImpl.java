@@ -77,9 +77,10 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void enviarConfirmacionPago(String destinatario, String nombreLocatario,
                                        String monto, String fecha) {
-        String asunto = "Mercaditosh — Confirmación de pago recibido";
+        try {
+            String asunto = "Mercaditosh — Confirmación de pago recibido";
 
-        String html = """
+            String html = """
                 <!DOCTYPE html>
                 <html>
                 <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
@@ -116,8 +117,12 @@ public class EmailServiceImpl implements EmailService {
                 </body>
                 </html>
                 """.formatted(nombreLocatario, monto, fecha);
-
-        enviarCorreoHtml(destinatario, asunto, html);
+            enviarCorreoHtml(destinatario, asunto, html);
+        } catch (Exception e) {
+            // El correo falló pero NO rompemos el flujo principal
+            log.warn("No se pudo enviar correo de confirmación a {}: {}",
+                    destinatario, e.getMessage());
+        }
     }
 
     // ---------------------------------------------------------------
