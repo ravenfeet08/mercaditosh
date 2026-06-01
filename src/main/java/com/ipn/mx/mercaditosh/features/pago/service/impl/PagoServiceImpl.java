@@ -3,6 +3,7 @@ package com.ipn.mx.mercaditosh.features.pago.service.impl;
 import com.ipn.mx.mercaditosh.core.entidades.Locatario;
 import com.ipn.mx.mercaditosh.core.entidades.Pago;
 import com.ipn.mx.mercaditosh.features.locatario.repository.LocatarioRepository;
+import com.ipn.mx.mercaditosh.features.mail.service.EmailService;
 import com.ipn.mx.mercaditosh.features.pago.repository.PagoRepository;
 import com.ipn.mx.mercaditosh.features.pago.service.PagoService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class PagoServiceImpl implements PagoService {
 
     private final PagoRepository pagoRepository;
     private final LocatarioRepository locatarioRepository;
+    private final EmailService emailService;
 
     // ---------------------------------------------------------------
     // LECTURA
@@ -116,6 +118,16 @@ public class PagoServiceImpl implements PagoService {
         }
 
         pago.setLocatario(locatario);
+
+        // Enviar correo de confirmación después de persistir
+        // En un caso real el locatario tendría un campo "email" —
+        // por ahora puedes hardcodear tu correo para la prueba
+        emailService.enviarConfirmacionPago(
+                "arellano.acosta.ixchel@gmail.com",          // destinatario (pon tu correo aquí)
+                locatario.getNombre(),           // nombre del locatario
+                pago.getMonto().toString(),      // monto
+                pago.getFechaPago().toString()   // fecha
+        );
         return pagoRepository.save(pago);
     }
 
