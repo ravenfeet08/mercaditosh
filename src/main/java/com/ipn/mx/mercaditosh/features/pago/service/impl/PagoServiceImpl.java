@@ -7,6 +7,7 @@ import com.ipn.mx.mercaditosh.features.mail.service.EmailService;
 import com.ipn.mx.mercaditosh.features.pago.repository.PagoRepository;
 import com.ipn.mx.mercaditosh.features.pago.service.PagoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PagoServiceImpl implements PagoService {
@@ -122,12 +124,18 @@ public class PagoServiceImpl implements PagoService {
         // Enviar correo de confirmación después de persistir
         // En un caso real el locatario tendría un campo "email" —
         // por ahora puedes hardcodear tu correo para la prueba
-        emailService.enviarConfirmacionPago(
-                "gatitaixchelaa@gmail.com",          // destinatario (pon tu correo aquí)
-                locatario.getNombre(),           // nombre del locatario
-                pago.getMonto().toString(),      // monto
-                pago.getFechaPago().toString()   // fecha
-        );
+        try {
+            emailService.enviarConfirmacionPago(
+                    "tu_correo@gmail.com",
+                    locatario.getNombre(),
+                    pago.getMonto().toString(),
+                    pago.getFechaPago().toString()
+            );
+        } catch (Exception e) {
+            log.warn("Correo no enviado, pero el pago se registró correctamente: {}",
+                    e.getMessage());
+        }
+
         return pagoRepository.save(pago);
     }
 
