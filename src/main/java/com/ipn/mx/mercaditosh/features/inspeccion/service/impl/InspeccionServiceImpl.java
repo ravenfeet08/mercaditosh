@@ -5,7 +5,9 @@ import com.ipn.mx.mercaditosh.core.entidades.Local;
 import com.ipn.mx.mercaditosh.features.inspeccion.repository.InspeccionRepository;
 import com.ipn.mx.mercaditosh.features.inspeccion.service.InspeccionService;
 import com.ipn.mx.mercaditosh.features.local.repository.LocalRepository;
+import com.ipn.mx.mercaditosh.features.mail.service.EmailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +18,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InspeccionServiceImpl implements InspeccionService {
 
     private final InspeccionRepository inspeccionRepository;
     private final LocalRepository localRepository;
+    private final EmailService emailService;
 
     // ---------------------------------------------------------------
     // LECTURA
@@ -166,7 +170,24 @@ public class InspeccionServiceImpl implements InspeccionService {
         }
 
         inspeccion.setLocal(local);
-        return inspeccionRepository.save(inspeccion);
+        Inspeccion guardada = inspeccionRepository.save(inspeccion);
+
+// Enviar alerta solo si el resultado es condicionado o no aprobado
+        if (!"aprobado".equals(inspeccion.getResultado())) {
+            try {
+                emailService.enviarAlertaInspeccion(
+                        "tu_correo@gmail.com",              // pon tu correo aquí
+                        "Local " + local.getNumeroLocal()
+                                + " — " + local.getTipoLocal(), // nombre descriptivo del local
+                        inspeccion.getResultado(),
+                        inspeccion.getObservaciones()
+                );
+            } catch (Exception e) {
+                log.warn("Alerta de inspección no enviada: {}", e.getMessage());
+            }
+        }
+
+        return guardada;
     }
 
     @Override
