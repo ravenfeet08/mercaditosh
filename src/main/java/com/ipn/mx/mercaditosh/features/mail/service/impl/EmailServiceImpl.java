@@ -65,8 +65,13 @@ public class EmailServiceImpl implements EmailService {
             mailSender.send(mensaje);
             log.info("Correo HTML enviado a: {}", destinatario);
 
-        } catch (MessagingException e) {
-            log.error("Error al enviar correo HTML a {}: {}", destinatario, e.getMessage());
+        //} catch (MessagingException e) {
+        //    log.error("Error al enviar correo HTML a {}: {}", destinatario, e.getMessage());
+        //}
+        } catch (Exception e) {
+            // Cambia warn por error para que aparezca destacado en los logs de Render
+            log.error("SMTP FALLÓ — causa: {} — mensaje: {}",
+                    e.getClass().getSimpleName(), e.getMessage());
         }
     }
 
